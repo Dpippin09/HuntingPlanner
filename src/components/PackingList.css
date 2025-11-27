@@ -1,0 +1,166 @@
+.packing-list {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.packing-list h2 {
+  margin: 0 0 1rem 0;
+  color: #2c3e50;
+  font-size: 1.5rem;
+}
+
+.packing-progress {
+  margin-bottom: 1.5rem;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50, #8BC34A);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.add-item-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.item-input {
+  flex: 1;
+  min-width: 150px;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.item-input:focus {
+  outline: none;
+  border-color: #4CAF50;
+}
+
+.category-select {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: white;
+  cursor: pointer;
+}
+
+.add-button {
+  padding: 0.75rem 1.5rem;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.add-button:hover {
+  background: #45a049;
+}
+
+.items-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.category-group {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.category-title {
+  margin: 0 0 0.75rem 0;
+  font-size: 1rem;
+  color: #555;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.5rem;
+}
+
+.items-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.packing-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.packing-item:last-child {
+  border-bottom: none;
+}
+
+.packing-item.packed .item-name {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.item-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  flex: 1;
+}
+
+.item-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.item-name {
+  font-size: 1rem;
+  color: #333;
+}
+
+.remove-button {
+  background: none;
+  border: none;
+  color: #ff4444;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0 0.5rem;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.remove-button:hover {
+  opacity: 1;
+}
+
+.empty-message {
+  text-align: center;
+  color: #888;
+  padding: 2rem;
+  font-style: italic;
+}
