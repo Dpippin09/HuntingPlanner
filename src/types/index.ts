@@ -97,3 +97,6 @@ export interface MapLocation {
   type: 'hunting_spot' | 'camp' | 'parking' | 'landmark';
   notes?: string;
 }
+
+// Re-export emergency types
+export * from './emergency';

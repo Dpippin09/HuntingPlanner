@@ -27,12 +27,16 @@ import {
   Schedule,
   LocationOn,
   Group,
-  Assignment
+  Assignment,
+  Share,
+  GroupAdd
 } from '@mui/icons-material';
 
 import { useHuntingTrip } from '../../context/HuntingTripContext';
 import { GameType } from '../../types';
 import { format } from 'date-fns';
+import TripSharingDialog from '../Trip/TripSharingDialog';
+import JoinTripDialog from '../Trip/JoinTripDialog';
 
 const Dashboard: React.FC = () => {
   const { 
@@ -44,6 +48,9 @@ const Dashboard: React.FC = () => {
   } = useHuntingTrip();
   
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [sharingDialogOpen, setSharingDialogOpen] = useState(false);
+  const [joinDialogOpen, setJoinDialogOpen] = useState(false);
+  const [tripToShare, setTripToShare] = useState<any>(null);
   const [formData, setFormData] = useState({
     name: '',
     startDate: '',
@@ -104,6 +111,14 @@ const Dashboard: React.FC = () => {
     return { status: 'completed', color: 'default' };
   };
 
+  const handleJoinTrip = (tripCode: string, message?: string) => {
+    // In a real app, this would make an API call to join the trip
+    console.log('Joining trip with code:', tripCode, 'Message:', message);
+    // For now, just close the dialog
+    setJoinDialogOpen(false);
+    // TODO: Add actual join trip logic
+  };
+
   return (
     <Box sx={{ p: 3 }}>
         <Typography variant="h4" gutterBottom>
@@ -114,15 +129,28 @@ const Dashboard: React.FC = () => {
         {currentTrip && (
           <Card sx={{ mb: 3, border: 2, borderColor: 'primary.main' }}>
             <CardContent>
-              <Box sx={{ display: 'flex', justifyContent: 'between', alignItems: 'flex-start', mb: 2 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                 <Typography variant="h5" component="h2">
                   Current Trip: {currentTrip.name}
                 </Typography>
-                <Chip 
-                  label={getTripStatus(currentTrip.startDate, currentTrip.endDate).status}
-                  color={getTripStatus(currentTrip.startDate, currentTrip.endDate).color as any}
-                  size="small"
-                />
+                <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    startIcon={<Share />}
+                    onClick={() => {
+                      setTripToShare(currentTrip);
+                      setSharingDialogOpen(true);
+                    }}
+                  >
+                    Share Trip
+                  </Button>
+                  <Chip 
+                    label={getTripStatus(currentTrip.startDate, currentTrip.endDate).status}
+                    color={getTripStatus(currentTrip.startDate, currentTrip.endDate).color as any}
+                    size="small"
+                  />
+                </Box>
               </Box>
               
               <Grid container spacing={2}>
@@ -170,13 +198,22 @@ const Dashboard: React.FC = () => {
           <Typography variant="h6">
             Your Trips ({trips.length})
           </Typography>
-          <Button
-            variant="contained"
-            startIcon={<Add />}
-            onClick={() => setDialogOpen(true)}
-          >
-            Create New Trip
-          </Button>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Button
+              variant="outlined"
+              startIcon={<GroupAdd />}
+              onClick={() => setJoinDialogOpen(true)}
+            >
+              Join Hunt
+            </Button>
+            <Button
+              variant="contained"
+              startIcon={<Add />}
+              onClick={() => setDialogOpen(true)}
+            >
+              Create New Trip
+            </Button>
+          </Box>
         </Box>
 
         {/* Trips List */}
@@ -198,8 +235,20 @@ const Dashboard: React.FC = () => {
                       <Box>
                         <IconButton 
                           size="small" 
+                          onClick={() => {
+                            setTripToShare(trip);
+                            setSharingDialogOpen(true);
+                          }}
+                          color="primary"
+                          title="Share Trip"
+                        >
+                          <Share />
+                        </IconButton>
+                        <IconButton 
+                          size="small" 
                           onClick={() => setCurrentTrip(trip.id)}
                           color={currentTrip?.id === trip.id ? 'primary' : 'default'}
+                          title="Edit Trip"
                         >
                           <Edit />
                         </IconButton>
@@ -207,6 +256,7 @@ const Dashboard: React.FC = () => {
                           size="small" 
                           onClick={() => deleteTrip(trip.id)}
                           color="error"
+                          title="Delete Trip"
                         >
                           <Delete />
                         </IconButton>
@@ -344,6 +394,25 @@ const Dashboard: React.FC = () => {
             <Button onClick={handleCreateTrip} variant="contained">Create Trip</Button>
           </DialogActions>
         </Dialog>
+
+        {/* Trip Sharing Dialog */}
+        {tripToShare && (
+          <TripSharingDialog
+            trip={tripToShare}
+            open={sharingDialogOpen}
+            onClose={() => {
+              setSharingDialogOpen(false);
+              setTripToShare(null);
+            }}
+          />
+        )}
+
+        {/* Join Trip Dialog */}
+        <JoinTripDialog
+          open={joinDialogOpen}
+          onClose={() => setJoinDialogOpen(false)}
+          onJoinTrip={handleJoinTrip}
+        />
       </Box>
   );
 };

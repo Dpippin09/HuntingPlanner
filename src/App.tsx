@@ -9,7 +9,8 @@ import {
   Container,
   Tabs,
   Tab,
-  Box
+  Box,
+  CircularProgress
 } from '@mui/material';
 import { 
   Dashboard,
@@ -17,7 +18,8 @@ import {
   Cloud,
   Map,
   Group,
-  Pets 
+  Pets,
+  Warning
 } from '@mui/icons-material';
 
 // Components
@@ -27,9 +29,14 @@ import WeatherMonitor from './components/Weather/WeatherMonitor';
 import LocationMap from './components/Map/LocationMap';
 import HuntingParty from './components/Party/HuntingParty';
 import GameSelection from './components/Game/GameSelection';
+import EmergencyPanel from './components/Emergency/EmergencyPanel';
+import AuthPage from './components/Auth/AuthPage';
+import UserProfileMenu from './components/Auth/UserProfileMenu';
 
 // Context
 import { HuntingTripProvider } from './context/HuntingTripContext';
+import { EmergencyProvider } from './context/EmergencyContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 
 const theme = createTheme({
   palette: {
@@ -78,23 +85,47 @@ function a11yProps(index: number) {
   };
 }
 
-function App() {
+function MainApp() {
+  const { isAuthenticated, isLoading } = useAuth();
   const [tabValue, setTabValue] = useState(0);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
+  // Show loading spinner while checking authentication
+  if (isLoading) {
+    return (
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          height: '100vh',
+          backgroundColor: 'background.default'
+        }}
+      >
+        <CircularProgress size={60} />
+      </Box>
+    );
+  }
+
+  // Show authentication page if not logged in
+  if (!isAuthenticated) {
+    return <AuthPage />;
+  }
+
+  // Show main app if authenticated
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <HuntingTripProvider>
+    <HuntingTripProvider>
+      <EmergencyProvider>
         <AppBar position="static">
           <Toolbar>
             <Pets sx={{ mr: 2 }} />
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               Hunting Planner
             </Typography>
+            <UserProfileMenu />
           </Toolbar>
           <Tabs 
             value={tabValue} 
@@ -110,6 +141,7 @@ function App() {
             <Tab icon={<Map />} label="Location" {...a11yProps(3)} />
             <Tab icon={<Group />} label="Hunting Party" {...a11yProps(4)} />
             <Tab icon={<Pets />} label="Game Selection" {...a11yProps(5)} />
+            <Tab icon={<Warning />} label="Party Alerts" {...a11yProps(6)} />
           </Tabs>
         </AppBar>
 
@@ -132,8 +164,22 @@ function App() {
           <TabPanel value={tabValue} index={5}>
             <GameSelection />
           </TabPanel>
+          <TabPanel value={tabValue} index={6}>
+            <EmergencyPanel />
+          </TabPanel>
         </Container>
-      </HuntingTripProvider>
+      </EmergencyProvider>
+    </HuntingTripProvider>
+  );
+}
+
+function App() {
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <AuthProvider>
+        <MainApp />
+      </AuthProvider>
     </ThemeProvider>
   );
 }

@@ -38,6 +38,7 @@ import {
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import { useHuntingTrip } from '../../context/HuntingTripContext';
+import { useEmergency } from '../../context/EmergencyContext';
 import { MapLocation } from '../../types';
 
 // Fix for default markers in react-leaflet
@@ -67,8 +68,20 @@ const locationTypeIcons = {
   landmark: createCustomIcon('yellow'),
 };
 
+// Emergency alert icon
+const emergencyIcon = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  iconSize: [35, 55], // Larger for emergency alerts
+  iconAnchor: [17, 55],
+  popupAnchor: [1, -44],
+  shadowSize: [55, 55],
+  className: 'emergency-marker-pulse' // We'll add CSS animation
+});
+
 const LocationMap: React.FC = () => {
   const { currentTrip, updateTrip } = useHuntingTrip();
+  const { alerts } = useEmergency();
   const [locations, setLocations] = useState<MapLocation[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingLocation, setEditingLocation] = useState<MapLocation | null>(null);
@@ -234,6 +247,30 @@ const LocationMap: React.FC = () => {
                       </Popup>
                     </Marker>
                   )}
+
+                  {/* Emergency alert markers */}
+                  {currentTrip && alerts
+                    .filter(alert => alert.tripId === currentTrip.id && !alert.isResolved)
+                    .map((alert, index) => (
+                      <Marker
+                        key={`emergency-${alert.id}`}
+                        position={[alert.location.lat, alert.location.lng]}
+                        icon={emergencyIcon}
+                      >
+                        <Popup>
+                          <div style={{ minWidth: '200px' }}>
+                            <strong style={{ color: 'red' }}>🚨 EMERGENCY ALERT</strong><br />
+                            <strong>{alert.senderName}</strong><br />
+                            Type: {alert.alertType.replace('_', ' ').toUpperCase()}<br />
+                            {alert.message && <span>Message: {alert.message}<br /></span>}
+                            Time: {alert.timestamp.toLocaleString()}<br />
+                            Location: {alert.location.lat.toFixed(6)}, {alert.location.lng.toFixed(6)}
+                            {alert.location.accuracy && <br />}
+                            {alert.location.accuracy && <span>Accuracy: ±{Math.round(alert.location.accuracy)}m</span>}
+                          </div>
+                        </Popup>
+                      </Marker>
+                    ))}
 
                   {/* Additional location markers */}
                   {locations.map((location, index) => (
