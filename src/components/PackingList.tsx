@@ -25,7 +25,7 @@ const PackingList: React.FC<PackingListProps> = ({ items, onUpdateItems }) => {
     if (!newItemName.trim()) return;
 
     const newItem: PackingItem = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       name: newItemName.trim(),
       category: newItemCategory,
       packed: false,

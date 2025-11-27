@@ -4,12 +4,10 @@ import './WeatherForecast.css';
 
 interface WeatherForecastProps {
   location: HuntingLocation | null;
-  onWeatherUpdate: (weather: WeatherData[]) => void;
 }
 
 const WeatherForecast: React.FC<WeatherForecastProps> = ({
   location,
-  onWeatherUpdate,
 }) => {
   const [weather, setWeather] = useState<WeatherData[]>([]);
   const [loading, setLoading] = useState(false);
@@ -59,24 +57,21 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({
       }));
       
       setWeather(weatherData);
-      onWeatherUpdate(weatherData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch weather');
       setWeather([]);
-      onWeatherUpdate([]);
     } finally {
       setLoading(false);
     }
-  }, [onWeatherUpdate]);
+  }, []);
 
   useEffect(() => {
     if (location && location.latitude !== 0 && location.longitude !== 0) {
       fetchWeather(location.latitude, location.longitude);
     } else {
       setWeather([]);
-      onWeatherUpdate([]);
     }
-  }, [location, fetchWeather, onWeatherUpdate]);
+  }, [location, fetchWeather]);
 
   const getWeatherEmoji = (description: string): string => {
     const desc = description.toLowerCase();

@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import './App.css';
-import { PackingItem, HuntingLocation, HuntingGame, WeatherData } from './types';
+import { PackingItem, HuntingLocation, HuntingGame } from './types';
 import TripDetails from './components/TripDetails';
 import LocationSelector from './components/LocationSelector';
 import WeatherForecast from './components/WeatherForecast';
@@ -14,11 +14,6 @@ function App() {
   const [location, setLocation] = useState<HuntingLocation | null>(null);
   const [selectedGame, setSelectedGame] = useState<HuntingGame | null>(null);
   const [packingList, setPackingList] = useState<PackingItem[]>([]);
-  const [, setWeatherForecast] = useState<WeatherData[]>([]);
-
-  const handleWeatherUpdate = useCallback((weather: WeatherData[]) => {
-    setWeatherForecast(weather);
-  }, []);
 
   return (
     <div className="app">
@@ -57,7 +52,6 @@ function App() {
           <section className="section weather-section">
             <WeatherForecast
               location={location}
-              onWeatherUpdate={handleWeatherUpdate}
             />
           </section>
 
